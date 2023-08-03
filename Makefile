@@ -1,7 +1,7 @@
 obj-m += kpanic.o
 
 all:
-	make -C /lib/modules/6.4.7-arch1-1/build M=. modules
+	make -C /lib/modules/$(shell uname -r)/build M=$(PWD) modules
 
 clean:
-	make -C /lib/modules/6.4.7-arch1-1/build M=. clean
+	make -C /lib/modules/$(shell uname -r)/build M=$(PWD) clean
