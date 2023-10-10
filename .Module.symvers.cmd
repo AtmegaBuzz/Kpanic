@@ -1,1 +1,0 @@
-cmd_/home/atmegabuzz/Desktop/lfx/drivers/Kpanic/Module.symvers :=  sed 's/ko$$/o/'  /home/atmegabuzz/Desktop/lfx/drivers/Kpanic/modules.order | scripts/mod/modpost  -a   -N -o /home/atmegabuzz/Desktop/lfx/drivers/Kpanic/Module.symvers -n -e -i Module.symvers -T - 
