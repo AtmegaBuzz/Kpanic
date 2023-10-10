@@ -1,0 +1,1 @@
+cmd_/home/atmegabuzz/Desktop/lfx/drivers/Kpanic/main.mod := printf '%s\n'   main.o | awk '!x[$$0]++ { print("/home/atmegabuzz/Desktop/lfx/drivers/Kpanic/"$$0) }' > /home/atmegabuzz/Desktop/lfx/drivers/Kpanic/main.mod
