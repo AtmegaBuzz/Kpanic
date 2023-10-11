@@ -1,55 +1,44 @@
-#include <linux/module.h>
-#include <linux/init.h>
-#include <linux/fs.h>
 #include <linux/kernel.h>
-#include <linux/device.h>
-#include <linux/kdev_t.h>
+#include <linux/init.h>
+#include <linux/input.h>
+#include <linux/keyboard.h>
 
-/* Meta Information */
-
+MODULE_AUTHOR("Swapnil Shinde");
+MODULE_DESCRIPTION("Simple driver that logs keyboard stokes in the kernel log");
 MODULE_LICENSE("GPL");
-MODULE_AUTHOR("SWAPNIL SHINDE");
-MODULE_DESCRIPTION("THIS IS GREETHING MODULE");
-
-// creating dev with our custom major and minor number
-// dev_t dev = MKDEV(494,0);
-dev_t dev;
-
-/* open and close a file using linux driver */
-// int myNumber, arr_numbers[4];
-// char *charValue;
-// int cb_value = 0;
 
 
-// module_param(myNumber,int,S_IRUSR|S_IWUSR);
-// module_prarm(charValue,charp,S_IRUSR|S_IWUSR);
-// module_param_array(arr_numbers,int,NULL,S_IRUSR|S_IWUSR);
- 
+static int my_keyboard_notifier(struct notifier_block *nblock,unsigned long code, void *_param){
+  struct keyboard_notifier_param *param = _param;
 
-static int __init ModuleInit(void){
-
-  // static method of assigning major and minor number
-  // register_chrdev_region(dev,1,"Embedded dev device");
-
-  int res = alloc_chrdev_region(&dev,0,1,"Embedded devices 1");
-
-  if (res < 0){
-    pr_info("Major Number allocation failed\n");
-    return -1;
+  if ( code == KBD_KEYCODE ){
+    pr_info("Key Pressed (Key=%u)\n",param->value);
   }
-  
-  pr_info("Major Number %d, Minor Number %d\n",MAJOR(dev),MINOR(dev));
+
+  return NOTIFY_OK;
+}
+
+
+static struct notifier_block my_keyboard_notifier_block = {
+  .notifier_call = my_keyboard_notifier,
+};
+
+
+static int __init init_keyboard(void){
+
+
+  pr_info("Loaded Keyboard Module");
+  register_keyboard_notifier(&my_keyboard_notifier_block);
   return 0;
+}
+
+
+static void __exit exit_keyboard(void){
+  unregister_keyboard_notifier(&my_keyboard_notifier_block);
+  pr_info("Keyboard module removed");
   
 }
 
 
-static void __exit ModuleExit(void){
-
-  unregister_chrdev_region(dev,1);
-  pr_info("module exit\n");  
-}
-
-
-module_init(ModuleInit);
-module_exit(ModuleExit);
+module_init(init_keyboard);
+module_exit(exit_keyboard);
